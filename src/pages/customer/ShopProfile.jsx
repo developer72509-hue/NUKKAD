@@ -55,8 +55,6 @@ export default function ShopProfile() {
       setShop(shopData);
       setProducts(productData);
 
-      // Number stays masked until this customer has an active order with
-      // this shop — no order, no full contact number.
       if (isAuthenticated) {
         hasActiveOrderWithShop(shopId)
           .then(setCanSeeFullPhone)
@@ -65,7 +63,6 @@ export default function ShopProfile() {
         setCanSeeFullPhone(false);
       }
 
-      // Only show category filters for categories that actually have products here.
       const usedCategoryIds = new Set(productData.map((p) => p.category_id).filter(Boolean));
       if (usedCategoryIds.size > 0) {
         const allCats = await getCategories();
@@ -95,9 +92,23 @@ export default function ShopProfile() {
 
   return (
     <div>
-      <div className="relative h-40 w-full bg-ink-100 sm:h-56">
+      {/* Cover: blurred zoomed copy fills the banner, sharp original sits on
+          top un-cropped (object-contain) so no part of the uploaded image is lost. */}
+      <div className="relative h-48 w-full overflow-hidden bg-ink-100 sm:h-64">
         {shop.cover_image_url ? (
-          <img src={shop.cover_image_url} alt="" className="h-full w-full object-cover" />
+          <>
+            <img
+              src={shop.cover_image_url}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 h-full w-full scale-110 object-cover opacity-50 blur-2xl"
+            />
+            <img
+              src={shop.cover_image_url}
+              alt=""
+              className="relative z-10 h-full w-full object-contain"
+            />
+          </>
         ) : (
           <div className="flex h-full w-full items-center justify-center">
             <Store className="h-10 w-10 text-ink-300" aria-hidden="true" />
@@ -105,16 +116,16 @@ export default function ShopProfile() {
         )}
       </div>
 
-      <div className="container-app -mt-10 pb-10">
-        <div className="flex items-end gap-4">
+      <div className="container-app -mt-8 pb-10">
+        <div className="relative z-20 flex items-end gap-4">
           {shop.logo_url ? (
             <img
               src={shop.logo_url}
               alt=""
-              className="h-20 w-20 rounded-2xl border-4 border-white object-cover shadow-sm"
+              className="h-20 w-20 rounded-2xl border-4 border-white bg-white object-cover shadow-lg"
             />
           ) : (
-            <div className="flex h-20 w-20 items-center justify-center rounded-2xl border-4 border-white bg-brand-50 shadow-sm">
+            <div className="flex h-20 w-20 items-center justify-center rounded-2xl border-4 border-white bg-brand-50 shadow-lg">
               <Store className="h-8 w-8 text-brand-500" aria-hidden="true" />
             </div>
           )}
