@@ -18,8 +18,13 @@ export async function placeOrder({ shopId, addressId, items }) {
 const ORDER_LIST_COLUMNS =
   'id, status, subtotal, delivery_fee, total, created_at, shop_id, shops(name, logo_url)';
 
+// Note: shop phone is intentionally NOT selected here — it's fetched
+// separately via marketplaceService.getShopById(), which returns it
+// already masked/unmasked server-side (get_shop_public() RPC). Selecting
+// it raw here would ship the real number to every viewer of this order
+// regardless of whether the order is still active.
 const ORDER_DETAIL_COLUMNS =
-  'id, customer_id, shop_id, address_id, status, subtotal, delivery_fee, total, payment_method, delivery_phone, delivery_address_snapshot, delivery_pincode_snapshot, delivery_latitude, delivery_longitude, created_at, updated_at, shops(name, phone, logo_url, address_line)';
+  'id, customer_id, shop_id, address_id, status, subtotal, delivery_fee, total, payment_method, delivery_phone, delivery_address_snapshot, delivery_pincode_snapshot, delivery_latitude, delivery_longitude, created_at, updated_at, shops(name, logo_url, address_line)';
 
 /**
  * RLS restricts this to the authenticated customer's own orders
