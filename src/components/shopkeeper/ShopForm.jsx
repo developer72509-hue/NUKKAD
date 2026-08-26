@@ -3,6 +3,7 @@ import { LocateFixed } from 'lucide-react';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
 import LocationMap from '../ui/LocationMap';
+import { isValidIndianPhone, normalizeIndianPhone } from '../../utils/phone';
 
 export default function ShopForm({ initial, initialCategoryIds, categories, onSubmit, submitting, submitLabel = 'Save shop' }) {
   const [form, setForm] = useState({
@@ -52,7 +53,7 @@ export default function ShopForm({ initial, initialCategoryIds, categories, onSu
   function validate() {
     const next = {};
     if (!form.name.trim()) next.name = 'Shop name is required';
-    if (!/^\d{10}$/.test(form.phone.trim())) next.phone = 'Enter a valid 10-digit phone number';
+    if (!isValidIndianPhone(form.phone)) next.phone = 'Enter a valid 10-digit phone number';
     if (!form.addressLine.trim()) next.addressLine = 'Address is required';
     if (!/^\d{6}$/.test(form.pincode.trim())) next.pincode = 'Enter a valid 6-digit pincode';
     if (form.categoryIds.length === 0) next.categoryIds = 'Select at least one category';
@@ -73,7 +74,7 @@ export default function ShopForm({ initial, initialCategoryIds, categories, onSu
       description: form.description.trim(),
       categoryId: form.categoryIds[0],
       categoryIds: form.categoryIds,
-      phone: form.phone.trim(),
+      phone: normalizeIndianPhone(form.phone) ?? form.phone.trim(),
       addressLine: form.addressLine.trim(),
       pincode: form.pincode.trim(),
       latitude: parseFloat(form.latitude),
