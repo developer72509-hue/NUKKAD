@@ -9,6 +9,7 @@ import { updateProfile } from '../../services/authService';
 import { exportMyData, downloadAsJson } from '../../services/dataExportService';
 import { deleteMyAccount } from '../../services/accountService';
 import TwoFactorSetup from '../../components/account/TwoFactorSetup';
+import { isValidIndianPhone, normalizeIndianPhone } from '../../utils/phone';
 
 const LANGUAGES = [
   { value: 'en', label: 'English' },
@@ -69,8 +70,15 @@ export default function Profile() {
     setSaving(true);
     setError('');
     setSaved(false);
+
+    if (form.phone && !isValidIndianPhone(form.phone)) {
+      setError('Enter a valid 10-digit mobile number (e.g. 98765 43210).');
+      setSaving(false);
+      return;
+    }
+
     try {
-      await updateProfile(user.id, form);
+      await updateProfile(user.id, { ...form, phone: normalizeIndianPhone(form.phone) });
       await refreshProfile();
       setSaved(true);
     } catch (err) {
@@ -120,6 +128,9 @@ export default function Profile() {
             label="Phone"
             name="phone"
             type="tel"
+            inputMode="numeric"
+            maxLength={13}
+            placeholder="98765 43210"
             value={form.phone}
             onChange={(e) => setForm({ ...form, phone: e.target.value })}
           />
