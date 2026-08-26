@@ -170,7 +170,7 @@ export default function OrderDetail() {
           </div>
           {shopPhone && shopPhone.phone && (
             showFullNumbers ? (
-              
+              <a
                 href={telHref}
                 className="ml-auto flex h-9 w-9 items-center justify-center rounded-full text-ink-500 hover:bg-ink-50 focus-ring"
                 aria-label="Call shop"
