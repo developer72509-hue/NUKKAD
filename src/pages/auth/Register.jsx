@@ -6,8 +6,10 @@ import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 import { clsx } from '../../utils/clsx';
 import { signUp } from '../../services/authService';
-import { checkPasswordStrength } from '../../utils/passwordStrength';
+import { checkPasswordStrength, scorePasswordStrength } from '../../utils/passwordStrength';
 import { isValidIndianPhone, normalizeIndianPhone } from '../../utils/phone';
+
+const STRENGTH_COLORS = ['bg-danger-500', 'bg-danger-500', 'bg-amber-500', 'bg-lime-500', 'bg-green-600'];
 
 const ROLES = [
   { value: 'customer', label: 'Customer', icon: User },
@@ -17,10 +19,22 @@ const ROLES = [
 export default function Register() {
   const [role, setRole] = useState('customer');
   const [form, setForm] = useState({ fullName: '', email: '', phone: '', password: '' });
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const strength = scorePasswordStrength(form.password);
+  const passwordsMatch = confirmPassword.length > 0 && form.password === confirmPassword;
+  const passwordsMismatch = confirmPassword.length > 0 && form.password !== confirmPassword;
+
+  function handlePhoneChange(e) {
+    // Keep only digits, and cap at 10 digits — a valid Indian mobile
+    // number can't be longer than that, so don't let the field accept more.
+    const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 10);
+    setForm({ ...form, phone: digitsOnly });
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -30,12 +44,16 @@ export default function Register() {
       return;
     }
     if (!isValidIndianPhone(form.phone)) {
-      setError('Enter a valid 10-digit mobile number (e.g. 98765 43210).');
+      setError('Enter a correct 10-digit phone number (e.g. 9876543210).');
       return;
     }
     const { valid, issues } = checkPasswordStrength(form.password);
     if (!valid) {
       setError(`Password needs: ${issues.join(', ')}.`);
+      return;
+    }
+    if (form.password !== confirmPassword) {
+      setError('Passwords do not match. Please re-enter to confirm.');
       return;
     }
     setError('');
@@ -94,20 +112,49 @@ export default function Register() {
           label="Phone"
           type="tel"
           inputMode="numeric"
-          maxLength={13}
-          placeholder="98765 43210"
+          maxLength={10}
+          placeholder="9876543210"
           name="phone"
           value={form.phone}
-          onChange={(e) => setForm({ ...form, phone: e.target.value })}
+          onChange={handlePhoneChange}
+          hint="Enter correct 10-digit phone number"
           required
         />
+        <div>
+          <Input
+            label="Password"
+            type="password"
+            name="password"
+            value={form.password}
+            onChange={(e) => setForm({ ...form, password: e.target.value })}
+            hint="At least 10 characters, with upper/lowercase, a number, and a symbol."
+            required
+          />
+          {form.password && (
+            <div className="mt-2">
+              <div className="flex gap-1">
+                {[0, 1, 2, 3].map((i) => (
+                  <span
+                    key={i}
+                    className={clsx(
+                      'h-1.5 flex-1 rounded-full transition-colors',
+                      i < strength.score ? STRENGTH_COLORS[strength.score] : 'bg-ink-100'
+                    )}
+                  />
+                ))}
+              </div>
+              <p className="mt-1 text-xs text-ink-500">Password strength: {strength.label}</p>
+            </div>
+          )}
+        </div>
         <Input
-          label="Password"
+          label="Confirm password"
           type="password"
-          name="password"
-          value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
-          hint="At least 10 characters, with upper/lowercase, a number, and a symbol."
+          name="confirmPassword"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          error={passwordsMismatch ? 'Passwords do not match.' : undefined}
+          hint={!passwordsMismatch && passwordsMatch ? 'Passwords match.' : 'Re-enter your password.'}
           required
         />
         <label className="flex items-start gap-2 text-sm text-ink-600">
@@ -131,7 +178,12 @@ export default function Register() {
         </label>
 
         {error && <p className="text-sm text-danger-500">{error}</p>}
-        <Button type="submit" loading={loading} className="mt-2 w-full">
+        <Button
+          type="submit"
+          loading={loading}
+          disabled={!checkPasswordStrength(form.password).valid || !passwordsMatch}
+          className="mt-2 w-full"
+        >
           Create account
         </Button>
       </form>
