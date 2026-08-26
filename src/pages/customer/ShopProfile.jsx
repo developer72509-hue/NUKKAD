@@ -10,8 +10,6 @@ import { getShopById, getShopItems, getCategories } from '../../services/marketp
 import { useAuth } from '../../hooks/useAuth';
 import { useFavorites } from '../../hooks/useFavorites';
 import { isShopOpenNow } from '../../utils/shopStatus';
-import { maskPhone } from '../../utils/phone';
-import { hasActiveOrderWithShop } from '../../services/orderService';
 
 export default function ShopProfile() {
   const { shopId } = useParams();
@@ -26,7 +24,6 @@ export default function ShopProfile() {
   const [error, setError] = useState(null);
   const [favBusy, setFavBusy] = useState(false);
   const [favError, setFavError] = useState('');
-  const [canSeeFullPhone, setCanSeeFullPhone] = useState(false);
 
   async function handleToggleFavorite() {
     if (!isAuthenticated) {
@@ -55,14 +52,7 @@ export default function ShopProfile() {
       setShop(shopData);
       setProducts(productData);
 
-      if (isAuthenticated) {
-        hasActiveOrderWithShop(shopId)
-          .then(setCanSeeFullPhone)
-          .catch(() => setCanSeeFullPhone(false));
-      } else {
-        setCanSeeFullPhone(false);
-      }
-
+      // Only show category filters for categories that actually have products here.
       const usedCategoryIds = new Set(productData.map((p) => p.category_id).filter(Boolean));
       if (usedCategoryIds.size > 0) {
         const allCats = await getCategories();
@@ -88,7 +78,11 @@ export default function ShopProfile() {
     ? products.filter((p) => p.category_id === activeCategory)
     : products;
   const openNow = isShopOpenNow(shop);
-  const displayPhone = shop.phone && (canSeeFullPhone ? shop.phone : maskPhone(shop.phone));
+  // shop.phone is already the right string (real or masked) — decided
+  // server-side in get_shop_public() based on ownership/active-order
+  // eligibility. The client never receives the real digits when ineligible.
+  const canSeeFullPhone = shop.phone && !shop.phone_masked;
+  const displayPhone = shop.phone;
 
   return (
     <div>
