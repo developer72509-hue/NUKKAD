@@ -15,14 +15,15 @@ import {
   cancelOrder,
   subscribeToOrder,
 } from '../../services/orderService';
+import { getShopById } from '../../services/marketplaceService';
 import { getReviewForOrder, submitReview } from '../../services/reviewService';
-import { maskPhone, shouldShowFullNumber } from '../../utils/phone';
 
 export default function OrderDetail() {
   const { orderId } = useParams();
   const { user } = useAuth();
   const [order, setOrder] = useState(null);
   const [items, setItems] = useState([]);
+  const [shopPhone, setShopPhone] = useState(null); // { phone, phone_masked }
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -44,6 +45,16 @@ export default function OrderDetail() {
       ]);
       setOrder(orderData);
       setItems(itemsData);
+
+      // Shop phone comes from get_shop_public(), which decides server-side
+      // whether this customer is eligible to see the real number (mirrors
+      // the same "active order with this shop" rule the old client-side
+      // check used, just enforced where the data actually lives).
+      if (orderData?.shop_id) {
+        getShopById(orderData.shop_id)
+          .then((shop) => setShopPhone(shop ? { phone: shop.phone, phone_masked: shop.phone_masked } : null))
+          .catch(() => setShopPhone(null));
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -110,7 +121,7 @@ export default function OrderDetail() {
   if (!order) return <ErrorState title="Order not found" message="This order doesn't exist or isn't yours." />;
 
   const canCancel = order.status === 'PLACED';
-  const showFullNumbers = shouldShowFullNumber(order.status);
+  const showFullNumbers = Boolean(shopPhone?.phone) && !shopPhone.phone_masked;
 
   return (
     <div className="container-app max-w-2xl py-6">
@@ -157,10 +168,10 @@ export default function OrderDetail() {
               <p className="truncate text-xs text-ink-500">{order.shops.address_line}</p>
             )}
           </div>
-          {order.shops?.phone && (
+          {shopPhone?.phone && (
             showFullNumbers ? (
-              <a
-                href={`tel:${order.shops.phone}`}
+              
+                href={`tel:${shopPhone.phone}`}
                 className="ml-auto flex h-9 w-9 items-center justify-center rounded-full text-ink-500 hover:bg-ink-50 focus-ring"
                 aria-label="Call shop"
               >
@@ -171,7 +182,7 @@ export default function OrderDetail() {
                 className="ml-auto flex items-center gap-1.5 text-xs text-ink-400"
                 title="Number hidden after this order was closed"
               >
-                {maskPhone(order.shops.phone)}
+                {shopPhone.phone}
               </span>
             )
           )}
@@ -232,42 +243,3 @@ export default function OrderDetail() {
         />
         <div className="mt-2 flex items-center gap-2 text-sm text-ink-600">
           <Phone className="h-4 w-4 shrink-0 text-ink-400" aria-hidden="true" />
-          {order.delivery_phone}
-        </div>
-      </Card>
-
-      {order.status === 'DELIVERED' && !reviewLoading && (
-        <div className="mt-4">
-          {review ? (
-            <Card className="p-4">
-              <h2 className="mb-2 text-sm font-semibold text-ink-900">Your review</h2>
-              <div className="flex gap-1">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`h-4 w-4 ${
-                      i < review.rating ? 'fill-warning-500 text-warning-500' : 'text-ink-200'
-                    }`}
-                    aria-hidden="true"
-                  />
-                ))}
-              </div>
-              {review.comment && <p className="mt-2 text-sm text-ink-700">{review.comment}</p>}
-            </Card>
-          ) : (
-            <>
-              <ReviewForm onSubmit={handleSubmitReview} submitting={reviewSubmitting} />
-              {reviewError && <p className="mt-2 text-sm text-danger-500">{reviewError}</p>}
-            </>
-          )}
-        </div>
-      )}
-
-      <div className="mt-6 text-center">
-        <Link to="/orders" className="text-sm font-medium text-brand-600 hover:underline">
-          Back to your orders
-        </Link>
-      </div>
-    </div>
-  );
-}
