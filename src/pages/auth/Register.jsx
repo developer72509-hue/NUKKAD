@@ -7,6 +7,7 @@ import Button from '../../components/ui/Button';
 import { clsx } from '../../utils/clsx';
 import { signUp } from '../../services/authService';
 import { checkPasswordStrength } from '../../utils/passwordStrength';
+import { isValidIndianPhone, normalizeIndianPhone } from '../../utils/phone';
 
 const ROLES = [
   { value: 'customer', label: 'Customer', icon: User },
@@ -28,6 +29,10 @@ export default function Register() {
       setError('Please agree to the Privacy Policy and Terms of Service to continue.');
       return;
     }
+    if (!isValidIndianPhone(form.phone)) {
+      setError('Enter a valid 10-digit mobile number (e.g. 98765 43210).');
+      return;
+    }
     const { valid, issues } = checkPasswordStrength(form.password);
     if (!valid) {
       setError(`Password needs: ${issues.join(', ')}.`);
@@ -36,7 +41,7 @@ export default function Register() {
     setError('');
     setLoading(true);
     try {
-      await signUp({ ...form, role, termsAccepted });
+      await signUp({ ...form, phone: normalizeIndianPhone(form.phone), role, termsAccepted });
       navigate('/auth/verify', { state: { email: form.email } });
     } catch (err) {
       setError(err.message);
@@ -88,6 +93,9 @@ export default function Register() {
         <Input
           label="Phone"
           type="tel"
+          inputMode="numeric"
+          maxLength={13}
+          placeholder="98765 43210"
           name="phone"
           value={form.phone}
           onChange={(e) => setForm({ ...form, phone: e.target.value })}
