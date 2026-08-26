@@ -4,9 +4,6 @@ import { distanceKm, boundingBox } from '../utils/geo';
 const SHOP_CARD_COLUMNS =
   'id, name, category_id, logo_url, cover_image_url, is_open, is_active, rating_avg, rating_count, address_line, pincode, latitude, longitude, opening_time, closing_time, categories!shops_category_id_fkey(name)';
 
-const SHOP_DETAIL_COLUMNS =
-  'id, owner_id, name, description, category_id, phone, address_line, pincode, latitude, longitude, cover_image_url, logo_url, opening_time, closing_time, is_open, is_active, rating_avg, rating_count, categories!shops_category_id_fkey(name)';
-
 const PRODUCT_CARD_COLUMNS =
   'id, shop_id, category_id, name, description, price, unit, image_url, stock_quantity, is_available';
 
@@ -74,15 +71,24 @@ export async function getShops({ categoryId, search, limit = 24, near } = {}) {
     .slice(0, limit);
 }
 
+/**
+ * Uses get_shop_public() RPC instead of a direct table select so the raw
+ * phone number is never sent to the client unless the caller is eligible
+ * (shop owner, or has an active order with this shop) — determined
+ * server-side. Ineligible callers get an already-masked string back, not
+ * the real digits (see SECURITY.md / audit notes for why this matters:
+ * client-side-only masking still leaks the full number via the network
+ * tab). Returns `{ ...shop, phone, phone_masked }`.
+ */
 export async function getShopById(shopId) {
-  const { data, error } = await supabase
-    .from('shops')
-    .select(SHOP_DETAIL_COLUMNS)
-    .eq('id', shopId)
-    .eq('is_active', true)
-    .single();
+  const { data, error } = await supabase.rpc('get_shop_public', { p_shop_id: shopId });
   if (error) throw error;
-  return data;
+  const row = data?.[0];
+  if (!row) return null;
+  return {
+    ...row,
+    categories: row.category_name ? { name: row.category_name } : null,
+  };
 }
 
 /**
