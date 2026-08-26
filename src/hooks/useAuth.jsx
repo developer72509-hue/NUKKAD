@@ -5,6 +5,7 @@ import {
   onAuthStateChange,
   signOut as authSignOut,
 } from '../services/authService';
+import { CART_CLEAR_EVENT } from './useCart';
 
 const AuthContext = createContext(null);
 
@@ -69,10 +70,16 @@ export function AuthProvider({ children }) {
       }
     })();
 
-    const unsubscribe = onAuthStateChange(async (nextSession) => {
+    const unsubscribe = onAuthStateChange(async (nextSession, event) => {
       if (!active) return;
       setSession(nextSession);
       await hydrateProfile(nextSession);
+      // Covers manual sign-out AND passive expiry/revocation — either way,
+      // the next person to use this device (or tab) should never see the
+      // previous user's cart.
+      if (event === 'SIGNED_OUT') {
+        window.dispatchEvent(new Event(CART_CLEAR_EVENT));
+      }
     });
 
     return () => {
