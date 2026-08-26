@@ -23,7 +23,7 @@ export default function OrderDetail() {
   const { user } = useAuth();
   const [order, setOrder] = useState(null);
   const [items, setItems] = useState([]);
-  const [shopPhone, setShopPhone] = useState(null); // { phone, phone_masked }
+  const [shopPhone, setShopPhone] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -46,14 +46,14 @@ export default function OrderDetail() {
       setOrder(orderData);
       setItems(itemsData);
 
-      // Shop phone comes from get_shop_public(), which decides server-side
-      // whether this customer is eligible to see the real number (mirrors
-      // the same "active order with this shop" rule the old client-side
-      // check used, just enforced where the data actually lives).
-      if (orderData?.shop_id) {
+      if (orderData && orderData.shop_id) {
         getShopById(orderData.shop_id)
-          .then((shop) => setShopPhone(shop ? { phone: shop.phone, phone_masked: shop.phone_masked } : null))
-          .catch(() => setShopPhone(null));
+          .then(function (shop) {
+            setShopPhone(shop ? { phone: shop.phone, phone_masked: shop.phone_masked } : null);
+          })
+          .catch(function () {
+            setShopPhone(null);
+          });
       }
     } catch (err) {
       setError(err.message);
@@ -66,7 +66,6 @@ export default function OrderDetail() {
     load();
   }, [load]);
 
-  // Realtime status updates — no polling. RLS still applies to the payload.
   useEffect(() => {
     const unsubscribe = subscribeToOrder(orderId, (updatedOrder) => {
       setOrder((prev) => (prev ? { ...prev, ...updatedOrder } : prev));
@@ -75,24 +74,24 @@ export default function OrderDetail() {
   }, [orderId]);
 
   useEffect(() => {
-    if (order?.status !== 'DELIVERED') return;
+    if (!order || order.status !== 'DELIVERED') return;
     setReviewLoading(true);
     getReviewForOrder(orderId)
       .then(setReview)
       .catch(() => {})
       .finally(() => setReviewLoading(false));
-  }, [order?.status, orderId]);
+  }, [order, orderId]);
 
-  async function handleSubmitReview({ rating, comment }) {
+  async function handleSubmitReview(payload) {
     setReviewSubmitting(true);
     setReviewError('');
     try {
       const created = await submitReview({
-        orderId,
+        orderId: orderId,
         shopId: order.shop_id,
         customerId: user.id,
-        rating,
-        comment,
+        rating: payload.rating,
+        comment: payload.comment,
       });
       setReview(created);
     } catch (err) {
@@ -116,12 +115,13 @@ export default function OrderDetail() {
     }
   }
 
-  if (loading) return <LoadingState label="Loading order…" />;
+  if (loading) return <LoadingState label="Loading order..." />;
   if (error) return <ErrorState message={error} onRetry={load} />;
   if (!order) return <ErrorState title="Order not found" message="This order doesn't exist or isn't yours." />;
 
   const canCancel = order.status === 'PLACED';
-  const showFullNumbers = Boolean(shopPhone?.phone) && !shopPhone.phone_masked;
+  const showFullNumbers = Boolean(shopPhone && shopPhone.phone) && !(shopPhone && shopPhone.phone_masked);
+  const telHref = 'tel:' + (shopPhone ? shopPhone.phone : '');
 
   return (
     <div className="container-app max-w-2xl py-6">
@@ -155,7 +155,7 @@ export default function OrderDetail() {
 
       <Card className="mt-6 p-4">
         <div className="flex items-center gap-3">
-          {order.shops?.logo_url ? (
+          {order.shops && order.shops.logo_url ? (
             <img src={order.shops.logo_url} alt="" className="h-10 w-10 rounded-full object-cover" />
           ) : (
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-50">
@@ -163,15 +163,15 @@ export default function OrderDetail() {
             </div>
           )}
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-ink-900">{order.shops?.name}</p>
-            {order.shops?.address_line && (
+            <p className="truncate text-sm font-semibold text-ink-900">{order.shops && order.shops.name}</p>
+            {order.shops && order.shops.address_line && (
               <p className="truncate text-xs text-ink-500">{order.shops.address_line}</p>
             )}
           </div>
-          {shopPhone?.phone && (
+          {shopPhone && shopPhone.phone && (
             showFullNumbers ? (
               
-                href={`tel:${shopPhone.phone}`}
+                href={telHref}
                 className="ml-auto flex h-9 w-9 items-center justify-center rounded-full text-ink-500 hover:bg-ink-50 focus-ring"
                 aria-label="Call shop"
               >
@@ -200,10 +200,10 @@ export default function OrderDetail() {
               <div className="min-w-0 flex-1">
                 <p className="truncate text-ink-900">{item.item_name_snapshot}</p>
                 <p className="text-xs text-ink-500">
-                  {item.quantity} × ₹{item.unit_price_snapshot}
+                  {item.quantity} x Rs.{item.unit_price_snapshot}
                 </p>
               </div>
-              <span className="font-medium text-ink-900">₹{item.line_total}</span>
+              <span className="font-medium text-ink-900">Rs.{item.line_total}</span>
             </div>
           ))}
         </div>
@@ -211,15 +211,15 @@ export default function OrderDetail() {
         <div className="mt-4 border-t border-ink-100 pt-3 text-sm">
           <div className="flex justify-between text-ink-600">
             <span>Subtotal</span>
-            <span>₹{order.subtotal}</span>
+            <span>Rs.{order.subtotal}</span>
           </div>
           <div className="mt-1 flex justify-between text-ink-600">
             <span>Delivery fee</span>
-            <span>₹{order.delivery_fee}</span>
+            <span>Rs.{order.delivery_fee}</span>
           </div>
           <div className="mt-2 flex justify-between text-base font-semibold text-ink-900">
             <span>Total</span>
-            <span>₹{order.total}</span>
+            <span>Rs.{order.total}</span>
           </div>
           <div className="mt-2 text-xs text-ink-500">Payment: {order.payment_method}</div>
         </div>
@@ -243,3 +243,44 @@ export default function OrderDetail() {
         />
         <div className="mt-2 flex items-center gap-2 text-sm text-ink-600">
           <Phone className="h-4 w-4 shrink-0 text-ink-400" aria-hidden="true" />
+          {order.delivery_phone}
+        </div>
+      </Card>
+
+      {order.status === 'DELIVERED' && !reviewLoading && (
+        <div className="mt-4">
+          {review ? (
+            <Card className="p-4">
+              <h2 className="mb-2 text-sm font-semibold text-ink-900">Your review</h2>
+              <div className="flex gap-1">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star
+                    key={i}
+                    className={
+                      i < review.rating
+                        ? 'h-4 w-4 fill-warning-500 text-warning-500'
+                        : 'h-4 w-4 text-ink-200'
+                    }
+                    aria-hidden="true"
+                  />
+                ))}
+              </div>
+              {review.comment && <p className="mt-2 text-sm text-ink-700">{review.comment}</p>}
+            </Card>
+          ) : (
+            <>
+              <ReviewForm onSubmit={handleSubmitReview} submitting={reviewSubmitting} />
+              {reviewError && <p className="mt-2 text-sm text-danger-500">{reviewError}</p>}
+            </>
+          )}
+        </div>
+      )}
+
+      <div className="mt-6 text-center">
+        <Link to="/orders" className="text-sm font-medium text-brand-600 hover:underline">
+          Back to your orders
+        </Link>
+      </div>
+    </div>
+  );
+}
