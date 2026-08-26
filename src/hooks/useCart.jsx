@@ -3,6 +3,16 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 const CartContext = createContext(null);
 const STORAGE_KEY = 'nukkad_cart_v1';
 
+// Fired by useAuth on SIGNED_OUT. CartProvider and AuthProvider are
+// separate contexts (no direct reference to each other) and both persist
+// for the app's whole lifetime, so removing the localStorage key alone
+// isn't enough — the in-memory `cart` state would still hold the previous
+// user's items until a full page reload. A custom event lets AuthProvider
+// trigger a real state reset here without the two hooks importing each
+// other. See audit notes: shared/public-device logout was leaking the
+// previous customer's cart (shop + items + prices) to the next login.
+export const CART_CLEAR_EVENT = 'nukkad:clear-cart';
+
 function loadInitial() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -19,6 +29,14 @@ export function CartProvider({ children }) {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
   }, [cart]);
+
+  useEffect(() => {
+    function handleClear() {
+      setCart({ shopId: null, shopName: null, items: [] });
+    }
+    window.addEventListener(CART_CLEAR_EVENT, handleClear);
+    return () => window.removeEventListener(CART_CLEAR_EVENT, handleClear);
+  }, []);
 
   /**
    * Adds an item held client-side for display only (name/price/image are
