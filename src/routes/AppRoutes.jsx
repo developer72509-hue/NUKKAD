@@ -22,6 +22,12 @@ import Grievance from '../pages/legal/Grievance';
 import About from '../pages/legal/About';
 import Help from '../pages/legal/Help';
 import Contact from '../pages/legal/Contact';
+import Returns from '../pages/legal/Returns';
+import Cancellation from '../pages/legal/Cancellation';
+import Shipping from '../pages/legal/Shipping';
+import SellerTerms from '../pages/legal/SellerTerms';
+import IPPolicy from '../pages/legal/IPPolicy';
+import ProhibitedProducts from '../pages/legal/ProhibitedProducts';
 
 import Login from '../pages/auth/Login';
 import Register from '../pages/auth/Register';
@@ -105,6 +111,12 @@ export default function AppRoutes() {
         <Route path="/about" element={<About />} />
         <Route path="/help" element={<Help />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/returns" element={<Returns />} />
+        <Route path="/cancellation" element={<Cancellation />} />
+        <Route path="/shipping" element={<Shipping />} />
+        <Route path="/seller-terms" element={<SellerTerms />} />
+        <Route path="/ip-policy" element={<IPPolicy />} />
+        <Route path="/prohibited-products" element={<ProhibitedProducts />} />
       </Route>
 
       {/* Auth flows */}
