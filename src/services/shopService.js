@@ -1,7 +1,7 @@
 import { supabase } from '../lib/supabaseClient';
 
 const SHOP_COLUMNS =
-  'id, owner_id, name, description, category_id, phone, address_line, pincode, latitude, longitude, cover_image_url, logo_url, opening_time, closing_time, is_open, is_active, rating_avg, rating_count, created_at, updated_at, categories!shops_category_id_fkey(id, name)';
+  'id, owner_id, name, description, category_id, phone, address_line, pincode, latitude, longitude, cover_image_url, logo_url, opening_time, closing_time, is_open, is_active, rating_avg, rating_count, gstin, gst_not_applicable, seller_declaration_at, created_at, updated_at, categories!shops_category_id_fkey(id, name)';
 
 /**
  * A shop is 1:1 with its owner (UNIQUE(owner_id) at the DB level). Returns
@@ -41,6 +41,9 @@ export async function createShop(ownerId, payload) {
       longitude: payload.longitude,
       opening_time: payload.openingTime || null,
       closing_time: payload.closingTime || null,
+      gstin: payload.gstin || null,
+      gst_not_applicable: Boolean(payload.gstNotApplicable),
+      seller_declaration_at: payload.sellerDeclarationAccepted ? new Date().toISOString() : null,
     })
     .select(SHOP_COLUMNS)
     .single();
@@ -65,6 +68,11 @@ export async function updateShop(shopId, payload) {
       longitude: payload.longitude,
       opening_time: payload.openingTime || null,
       closing_time: payload.closingTime || null,
+      gstin: payload.gstin || null,
+      gst_not_applicable: Boolean(payload.gstNotApplicable),
+      ...(payload.sellerDeclarationAccepted
+        ? { seller_declaration_at: new Date().toISOString() }
+        : {}),
       ...(payload.logoUrl !== undefined ? { logo_url: payload.logoUrl } : {}),
       ...(payload.coverImageUrl !== undefined ? { cover_image_url: payload.coverImageUrl } : {}),
     })
