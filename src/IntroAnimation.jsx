@@ -2,31 +2,36 @@ import { useEffect, useState } from "react";
 import "./IntroAnimation.css";
 
 export default function IntroAnimation({ onFinish }) {
-  const [stage, setStage] = useState(0);
+  const [stage, setStage] = useState("shutter"); // shutter -> icons -> logo -> done
 
   useEffect(() => {
-    const t1 = setTimeout(() => setStage(1), 300);   // shutter opens
-    const t2 = setTimeout(() => setStage(2), 1200);  // icons pop
-    const t3 = setTimeout(() => setStage(3), 2600);  // logo reveal
-    const t4 = setTimeout(() => onFinish && onFinish(), 4200); // done
-
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
+    const t1 = setTimeout(() => setStage("icons"), 700);
+    const t2 = setTimeout(() => setStage("logo"), 2400);
+    const t3 = setTimeout(() => onFinish && onFinish(), 4600);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, [onFinish]);
 
   return (
     <div className="intro-screen">
-      <div className={`shutter ${stage >= 1 ? "shutter-open" : ""}`}>
-        <div className="shutter-lines" />
+      {/* Shutter stage */}
+      <div className={`stage shutter-stage ${stage === "shutter" ? "stage-active" : "stage-hidden"}`}>
+        <div className="shutter-box">
+          <div className="shutter-lines" />
+        </div>
       </div>
 
-      <div className={`icon-row ${stage >= 2 ? "icons-show" : ""}`}>
-        <span className="intro-icon" style={{ animationDelay: "0s" }}>🛒</span>
-        <span className="intro-icon" style={{ animationDelay: "0.15s" }}>📍</span>
-        <span className="intro-icon" style={{ animationDelay: "0.3s" }}>🤝</span>
-        <span className="intro-icon" style={{ animationDelay: "0.45s" }}>⚡</span>
+      {/* Icons stage */}
+      <div className={`stage icons-stage ${stage === "icons" ? "stage-active" : "stage-hidden"}`}>
+        <div className="icon-grid">
+          <div className="icon-circle" style={{ animationDelay: "0.05s" }}>🛒</div>
+          <div className="icon-circle" style={{ animationDelay: "0.2s" }}>📍</div>
+          <div className="icon-circle" style={{ animationDelay: "0.35s" }}>🤝</div>
+          <div className="icon-circle" style={{ animationDelay: "0.5s" }}>⚡</div>
+        </div>
       </div>
 
-      <div className={`logo-reveal ${stage >= 3 ? "logo-show" : ""}`}>
+      {/* Logo stage */}
+      <div className={`stage logo-stage ${stage === "logo" ? "stage-active" : "stage-hidden"}`}>
         <div className="logo-badge">🏠</div>
         <h1 className="logo-text">
           NUK<span>KAD</span>
