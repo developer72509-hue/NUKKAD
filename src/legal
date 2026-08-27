@@ -1,0 +1,149 @@
+export const legalDocs = {
+  "terms-and-conditions": {
+    title: "Terms & Conditions",
+    updated: "Last updated: [Add Date]",
+    sections: [
+      { h: "1. Introduction", b: "Welcome to Nukkad. By accessing or using the Nukkad website or mobile application (\"Platform\"), you agree to be bound by these Terms & Conditions. Nukkad is an online marketplace that connects local vendors/shopkeepers (\"Sellers\") with nearby customers (\"Buyers\") for the sale of goods." },
+      { h: "2. Eligibility", b: "You must be at least 18 years old and capable of entering into a legally binding contract to use this Platform. By registering, you confirm that the information you provide is accurate and current." },
+      { h: "3. Role of Nukkad", b: "Nukkad acts as an intermediary platform connecting Buyers and Sellers. Nukkad does not manufacture, own, or directly sell the products listed by Sellers. All product listings, pricing, quality, and fulfilment are the sole responsibility of the respective Seller." },
+      { h: "4. Account Responsibility", b: "You are responsible for maintaining the confidentiality of your account credentials and for all activities under your account. Notify us immediately of any unauthorised use." },
+      { h: "5. Orders & Payments", b: "Orders placed through the Platform are subject to acceptance by the Seller. Payments may be made via UPI, cash on delivery/pickup, or other methods made available on the Platform." },
+      { h: "6. Prohibited Use", b: "You agree not to misuse the Platform, including posting false information, engaging in fraudulent transactions, or violating any applicable law." },
+      { h: "7. Limitation of Liability", b: "Nukkad is not liable for any indirect, incidental, or consequential damages arising from use of the Platform, to the maximum extent permitted by law." },
+      { h: "8. Modifications", b: "Nukkad reserves the right to modify these Terms at any time. Continued use of the Platform after changes constitutes acceptance of the revised Terms." },
+      { h: "9. Governing Law", b: "These Terms are governed by the laws of India. Any disputes shall be subject to the exclusive jurisdiction of the courts at [Add City], India." },
+      { h: "10. Contact", b: "For questions about these Terms, contact us at [Add Support Email]." },
+    ],
+  },
+
+  "privacy-policy": {
+    title: "Privacy Policy",
+    updated: "Last updated: [Add Date]",
+    sections: [
+      { h: "1. Information We Collect", b: "We collect information you provide directly (name, phone number, email, address, payment details) and information collected automatically (device information, location data, usage data) when you use the Platform." },
+      { h: "2. How We Use Your Information", b: "We use your information to: process orders, connect you with nearby Sellers, provide customer support, send order updates and notifications, improve our services, and comply with legal obligations." },
+      { h: "3. Location Data", b: "With your permission, we access your device location to show you nearby shops and calculate delivery distance. You may disable location access at any time through your device settings, though this may limit certain features." },
+      { h: "4. Sharing of Information", b: "We share necessary order and contact information with Sellers to fulfil your orders. We do not sell your personal data to third parties. We may share data with service providers (payment gateways, hosting, notification services) strictly to operate the Platform." },
+      { h: "5. Data Security", b: "We use reasonable technical and organisational measures (including encryption in transit) to protect your personal information. However, no method of transmission over the internet is 100% secure." },
+      { h: "6. Data Retention", b: "We retain your information for as long as necessary to provide our services and comply with legal obligations." },
+      { h: "7. Your Rights", b: "You may access, correct, or request deletion of your personal data by contacting us at [Add Support Email]." },
+      { h: "8. Cookies & Tracking", b: "Our Platform may use cookies/local storage to enhance user experience and remember preferences." },
+      { h: "9. Children's Privacy", b: "The Platform is not intended for use by individuals under 18 years of age." },
+      { h: "10. Changes to this Policy", b: "We may update this Privacy Policy periodically. Continued use of the Platform indicates acceptance of the revised policy." },
+      { h: "11. Contact", b: "For privacy-related queries, contact us at [Add Support Email]." },
+    ],
+  },
+
+  "return-refund-policy": {
+    title: "Return & Refund Policy",
+    updated: "Last updated: [Add Date]",
+    sections: [
+      { h: "1. Overview", b: "As Nukkad connects Buyers with local, independent Sellers, return and refund eligibility may vary by Seller and product category (e.g., perishable groceries are typically non-returnable unless defective/incorrect)." },
+      { h: "2. Eligible Returns", b: "Items may be eligible for return/replacement if: the product is damaged or defective on delivery, the wrong item was delivered, or the item is significantly different from its description." },
+      { h: "3. Non-Returnable Items", b: "Perishable goods (fresh produce, dairy, cooked food), opened/used items, and items marked \"non-returnable\" at checkout are generally not eligible for return, except in case of quality issues." },
+      { h: "4. Return Process", b: "To request a return, contact the Seller or Nukkad support within [Add Time Window, e.g., 24 hours] of delivery, along with photos/evidence where applicable." },
+      { h: "5. Refunds", b: "Approved refunds will be processed to the original payment method within [Add Number] business days, or as store credit, at the customer's choice where applicable." },
+      { h: "6. Cash on Delivery Refunds", b: "For cash-on-delivery orders, refunds (where applicable) will be processed via bank transfer/UPI after verification." },
+    ],
+  },
+
+  "cancellation-policy": {
+    title: "Cancellation Policy",
+    updated: "Last updated: [Add Date]",
+    sections: [
+      { h: "1. Customer-Initiated Cancellation", b: "Orders may be cancelled by the customer free of charge before the Seller accepts/starts preparing the order. Once an order is marked \"Accepted\" or \"Preparing\" by the Seller, cancellation may not be possible." },
+      { h: "2. Seller-Initiated Cancellation", b: "A Seller may cancel an order due to unavailability of stock or inability to fulfil the order. In such cases, the full amount paid will be refunded to the customer." },
+      { h: "3. How to Cancel", b: "Cancellations can be made through the \"My Orders\" section of the app before the order status changes to \"Preparing\"." },
+      { h: "4. Refund on Cancellation", b: "Any amount paid for a cancelled order will be refunded as per the timelines mentioned in our Return & Refund Policy." },
+    ],
+  },
+
+  "shipping-delivery-policy": {
+    title: "Shipping / Delivery Policy",
+    updated: "Last updated: [Add Date]",
+    sections: [
+      { h: "1. Delivery Area", b: "Nukkad currently facilitates delivery/pickup from Sellers located within approximately [Add Radius, e.g., 5 km] of the customer's selected location, to ensure freshness and speed." },
+      { h: "2. Delivery Time", b: "Estimated delivery times are shown at checkout and depend on the Seller's preparation time and distance. Delays may occur due to traffic, weather, or high order volume." },
+      { h: "3. Delivery Partner", b: "Delivery may be fulfilled by the Seller directly, their own delivery staff, or a third-party delivery partner integrated with the Platform." },
+      { h: "4. Delivery Charges", b: "Applicable delivery charges (if any) are displayed at checkout before order confirmation." },
+      { h: "5. Pickup Option", b: "Customers may choose self-pickup from the Seller's shop where available, at no delivery charge." },
+      { h: "6. Failed Delivery", b: "If delivery fails due to an incorrect address or customer unavailability, additional charges may apply for re-delivery." },
+    ],
+  },
+
+  "grievance-redressal-policy": {
+    title: "Grievance Redressal Policy",
+    updated: "Last updated: [Add Date]",
+    sections: [
+      { h: "1. Purpose", b: "In accordance with the Consumer Protection (E-Commerce) Rules, 2020 and applicable IT Rules, Nukkad has designated a Grievance Officer to address complaints from users of the Platform." },
+      { h: "2. Grievance Officer Details", b: "Name: [Add Name]\nDesignation: Grievance Officer\nEmail: [Add Grievance Email]\nPhone: [Add Phone]\nAddress: [Add Registered Address]\nWorking Hours: [Add Hours, e.g., Mon–Sat, 10 AM – 6 PM]" },
+      { h: "3. How to File a Complaint", b: "Users may submit complaints regarding orders, Sellers, product quality, or platform issues via the Contact Us page, in-app support, or directly to the Grievance Officer." },
+      { h: "4. Resolution Timeline", b: "We aim to acknowledge complaints within 48 hours and resolve them within 30 days, in line with regulatory requirements." },
+      { h: "5. Escalation", b: "If unsatisfied with the resolution, users may escalate the matter to the appropriate consumer forum or authority under applicable Indian law." },
+    ],
+  },
+
+  "contact-us": {
+    title: "Contact Us",
+    updated: "",
+    sections: [
+      { h: "Company Name", b: "[Add Legal Business/Company Name]" },
+      { h: "Registered Address", b: "[Add Full Address]" },
+      { h: "Customer Support Email", b: "[Add Support Email]" },
+      { h: "Customer Support Phone", b: "[Add Phone Number]" },
+      { h: "Support Hours", b: "[Add Hours, e.g., 9 AM – 9 PM, All Days]" },
+      { h: "For Sellers/Shopkeepers", b: "[Add Seller Support Email/Phone]" },
+    ],
+  },
+
+  "seller-terms": {
+    title: "Seller / Shopkeeper Terms & Conditions",
+    updated: "Last updated: [Add Date]",
+    sections: [
+      { h: "1. Registration", b: "By registering as a Seller on Nukkad, you confirm that all information provided (shop details, owner details, contact information, address, and applicable licences) is true, accurate, and up to date." },
+      { h: "2. Legal Compliance", b: "Sellers are solely responsible for ensuring their business complies with all applicable laws, including but not limited to FSSAI licensing (for food items), Legal Metrology rules, GST regulations (where applicable), and local municipal/trade licences." },
+      { h: "3. Product Listings", b: "Sellers are responsible for the accuracy of product descriptions, images, pricing, and stock availability. Misleading listings may result in suspension of the seller account." },
+      { h: "4. Order Fulfilment", b: "Sellers must accept, prepare, and fulfil orders in a timely manner. Repeated failure to fulfil accepted orders may result in penalties or account suspension." },
+      { h: "5. Pricing & Commission", b: "Sellers agree to Nukkad's applicable commission/service fee structure, as communicated at the time of onboarding or updated from time to time." },
+      { h: "6. Payment Settlement", b: "Where Nukkad facilitates payment collection, settlement to the Seller's registered bank/UPI account will occur as per the agreed payout cycle, subject to successful order completion." },
+      { h: "7. Prohibited Products", b: "Sellers shall not list any product prohibited under Nukkad's Prohibited Products Policy or applicable Indian law." },
+      { h: "8. Termination", b: "Nukkad reserves the right to suspend or terminate a Seller account for violation of these Terms, fraudulent activity, or repeated customer complaints." },
+      { h: "9. Indemnity", b: "Sellers agree to indemnify Nukkad against any claims, damages, or liabilities arising from the products they list or sell." },
+    ],
+  },
+
+  "ip-copyright-policy": {
+    title: "Intellectual Property / Copyright Policy",
+    updated: "Last updated: [Add Date]",
+    sections: [
+      { h: "1. Ownership", b: "All content on the Nukkad Platform — including the Nukkad name, logo, design, graphics, and software — is the intellectual property of Nukkad and protected under applicable Indian and international IP laws, unless otherwise stated." },
+      { h: "2. Seller Content", b: "Sellers retain ownership of the product images and descriptions they upload but grant Nukkad a non-exclusive licence to display this content on the Platform for the purpose of facilitating sales." },
+      { h: "3. Restrictions", b: "Users may not copy, reproduce, distribute, or create derivative works from any part of the Platform without prior written consent from Nukkad." },
+      { h: "4. Reporting Infringement", b: "If you believe content on the Platform infringes your intellectual property rights, please contact us at [Add IP/Legal Email] with details of the claim." },
+    ],
+  },
+
+  "prohibited-products-policy": {
+    title: "Prohibited Products Policy",
+    updated: "Last updated: [Add Date]",
+    sections: [
+      { h: "1. Purpose", b: "To maintain a safe and legally compliant marketplace, the following categories of products/services are strictly prohibited from being listed or sold on Nukkad." },
+      { h: "2. Prohibited Categories", b: "• Alcohol, tobacco, and narcotic substances (unless the Seller holds valid licences and such sale is permitted by law in the applicable jurisdiction)\n• Firearms, weapons, and ammunition\n• Counterfeit or pirated goods\n• Prescription medicines without valid pharmacy licence\n• Hazardous chemicals or explosives\n• Live animals (except where locally regulated and licensed)\n• Any item illegal under Indian law\n• Adult/obscene content or products\n• Products violating third-party intellectual property rights" },
+      { h: "3. Consequences", b: "Listing prohibited items will result in immediate removal of the listing and may lead to suspension or termination of the Seller's account, and reporting to relevant authorities where required by law." },
+      { h: "4. Reporting", b: "If you come across a prohibited product listed on the Platform, please report it via [Add Report Email/In-app option]." },
+    ],
+  },
+};
+
+export const legalDocList = [
+  { slug: "terms-and-conditions", label: "Terms & Conditions" },
+  { slug: "privacy-policy", label: "Privacy Policy" },
+  { slug: "return-refund-policy", label: "Return & Refund Policy" },
+  { slug: "cancellation-policy", label: "Cancellation Policy" },
+  { slug: "shipping-delivery-policy", label: "Shipping / Delivery Policy" },
+  { slug: "grievance-redressal-policy", label: "Grievance Redressal Policy" },
+  { slug: "contact-us", label: "Contact Us" },
+  { slug: "seller-terms", label: "Seller Terms & Conditions" },
+  { slug: "ip-copyright-policy", label: "Intellectual Property Policy" },
+  { slug: "prohibited-products-policy", label: "Prohibited Products Policy" },
+];
