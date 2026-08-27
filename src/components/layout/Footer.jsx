@@ -30,6 +30,13 @@ const COLUMNS = [
     links: [
       { to: '/terms', label: 'Terms of service' },
       { to: '/privacy', label: 'Privacy policy' },
+      { to: '/returns', label: 'Return & refund policy' },
+      { to: '/cancellation', label: 'Cancellation policy' },
+      { to: '/shipping', label: 'Shipping & delivery policy' },
+      { to: '/seller-terms', label: 'Seller terms' },
+      { to: '/ip-policy', label: 'IP & copyright policy' },
+      { to: '/prohibited-products', label: 'Prohibited products' },
+      { to: '/grievance', label: 'Grievance redressal' },
     ],
   },
 ];
