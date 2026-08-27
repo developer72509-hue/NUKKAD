@@ -21,6 +21,9 @@ export default function ShopForm({ initial, initialCategoryIds, categories, onSu
     longitude: initial?.longitude ?? '',
     openingTime: initial?.opening_time?.slice(0, 5) ?? '09:00',
     closingTime: initial?.closing_time?.slice(0, 5) ?? '21:00',
+    gstin: initial?.gstin ?? '',
+    gstNotApplicable: initial?.gstin ? false : (initial?.gst_not_applicable ?? false),
+    sellerDeclaration: Boolean(initial?.seller_declaration_at),
   });
   const [errors, setErrors] = useState({});
   const [locating, setLocating] = useState(false);
@@ -59,6 +62,16 @@ export default function ShopForm({ initial, initialCategoryIds, categories, onSu
     if (form.categoryIds.length === 0) next.categoryIds = 'Select at least one category';
     if (form.latitude === '' || form.longitude === '')
       next.location = 'Add your shop location using GPS or enter coordinates manually';
+    if (!form.gstNotApplicable) {
+      const gstin = form.gstin.trim().toUpperCase();
+      if (!/^\d{2}[A-Z]{5}\d{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(gstin)) {
+        next.gstin = 'Enter a valid 15-character GSTIN, or mark "Not applicable"';
+      }
+    }
+    if (!form.sellerDeclaration) {
+      next.sellerDeclaration =
+        'Please confirm the seller declaration to continue';
+    }
     setErrors(next);
     return Object.keys(next).length === 0;
   }
@@ -81,6 +94,9 @@ export default function ShopForm({ initial, initialCategoryIds, categories, onSu
       longitude: parseFloat(form.longitude),
       openingTime: form.openingTime,
       closingTime: form.closingTime,
+      gstin: form.gstNotApplicable ? null : form.gstin.trim().toUpperCase(),
+      gstNotApplicable: form.gstNotApplicable,
+      sellerDeclarationAccepted: form.sellerDeclaration,
     };
     if (import.meta.env.DEV) console.log('[ShopForm] calling onSubmit with payload', payload);
     onSubmit(payload);
@@ -224,6 +240,57 @@ export default function ShopForm({ initial, initialCategoryIds, categories, onSu
           value={form.closingTime}
           onChange={(e) => setForm({ ...form, closingTime: e.target.value })}
         />
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <Input
+          label="GSTIN"
+          name="gstin"
+          value={form.gstin}
+          disabled={form.gstNotApplicable}
+          maxLength={15}
+          placeholder="e.g. 22AAAAA0000A1Z5"
+          onChange={(e) => setForm({ ...form, gstin: e.target.value.toUpperCase() })}
+          error={errors.gstin}
+        />
+        <label className="flex items-center gap-2 text-sm text-ink-600">
+          <input
+            type="checkbox"
+            checked={form.gstNotApplicable}
+            onChange={(e) =>
+              setForm({ ...form, gstNotApplicable: e.target.checked, gstin: '' })
+            }
+            className="h-4 w-4 rounded border-ink-300 text-brand-500 focus-ring"
+          />
+          GST registration is not applicable / I'm not registered
+        </label>
+      </div>
+
+      <div className="flex flex-col gap-1.5 rounded-xl border border-ink-200 bg-ink-50 p-3.5">
+        <label className="flex items-start gap-2.5 text-sm text-ink-700">
+          <input
+            type="checkbox"
+            checked={form.sellerDeclaration}
+            onChange={(e) => setForm({ ...form, sellerDeclaration: e.target.checked })}
+            className="mt-0.5 h-4 w-4 rounded border-ink-300 text-brand-500 focus-ring"
+          />
+          <span>
+            I confirm the information above is accurate, that the products I sell are genuine
+            and legally sellable, and that I'm responsible for the accuracy of my product
+            listings and images. I agree to NUKKAD's{' '}
+            <a href="/seller-terms" target="_blank" rel="noreferrer" className="text-brand-600 underline">
+              Seller Terms
+            </a>{' '}
+            and{' '}
+            <a href="/prohibited-products" target="_blank" rel="noreferrer" className="text-brand-600 underline">
+              Prohibited Products Policy
+            </a>
+            .
+          </span>
+        </label>
+        {errors.sellerDeclaration && (
+          <p className="text-xs text-danger-500">{errors.sellerDeclaration}</p>
+        )}
       </div>
 
       <Button type="submit" loading={submitting} className="mt-2 w-full">
